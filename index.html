@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate Dark Portfolio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle at top left, #0f0c29, #302b63, #24243e);
+      color: #f5f5f5;
+      overflow-x: hidden;
+      scroll-behavior: smooth;
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    body.fade-in { opacity: 1; }
+
+    header {
+      position: fixed;
+      top: 0; width: 100%; z-index: 1000;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 15px 20px;
+      backdrop-filter: blur(20px);
+      background: rgba(0,0,0,0.5);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+    }
+    header h1 {
+      font-size: 1.4rem;
+      font-weight: 700;
+      background: linear-gradient(90deg, #a18cd1, #fbc2eb);
+      -webkit-background-clip: text;
+      color: transparent;
+      text-shadow: 0 0 15px rgba(251,194,235,0.4);
+      white-space: nowrap;
+    }
+    nav ul {
+      display: flex; list-style: none; gap: 20px;
+    }
+    nav a {
+      text-decoration: none;
+      color: #eee;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    nav a:hover {
+      color: #fbc2eb;
+      text-shadow: 0 0 10px #fbc2eb, 0 0 20px #a18cd1;
+    }
+
+    /* Mobile menu */
+    .menu-toggle {
+      display: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: #fff;
+    }
+    @media(max-width:768px){
+      nav ul {
+        position: absolute;
+        top: 60px; right: 0;
+        flex-direction: column;
+        background: rgba(20,20,40,0.95);
+        padding: 20px;
+        border-radius: 12px;
+        display: none;
+      }
+      nav ul.active { display: flex; }
+      .menu-toggle { display: block; }
+    }
+
+    .scroll-indicator {
+      position: fixed; top: 0; left: 0; height: 4px;
+      background: linear-gradient(90deg, #ff9a9e, #a6c1ee, #84fab0);
+      z-index: 2000; width: 0;
+    }
+
+    section {
+      padding: 100px 8%;
+      min-height: 100vh;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 1s ease, transform 1s ease;
+    }
+    section.active-section { opacity: 1; transform: translateY(0); }
+
+    /* Hero */
+    #hero {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 30px;
+      text-align: center;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-15px);} }
+    #hero h2 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      background: linear-gradient(270deg,#ff9a9e,#fad0c4,#fbc2eb,#a6c1ee,#84fab0,#8fd3f4);
+      background-size: 600% 600%;
+      -webkit-background-clip: text;
+      color: transparent;
+      animation: gradientShift 12s ease infinite;
+    }
+    @keyframes gradientShift {
+      0%{background-position:0% 50%} 50%{background-position:100% 50%} 100%{background-position:0% 50%}
+    }
+    .description { font-size: 1rem; margin-top: 15px; line-height: 1.7; color: #ccc; }
+
+    /* Gallery */
+    #gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+    }
+    .gallery-item {
+      position: relative; overflow: hidden;
+      border-radius: 12px; cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .gallery-item:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(168, 255, 120, 0.4),
+                  0 0 35px rgba(120, 220, 255, 0.25);
+    }
+    .gallery-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.4s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.15); }
+
+    #demands {
+  padding: 80px 8%;
+  background: rgba(255,255,255,0.03);
+  border-radius: 16px;
+  margin-top: 50px;
+  box-shadow: 0 0 25px rgba(255,255,255,0.05);
+  text-align: center;
+}
+
+#demands h2 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  margin-bottom: 25px;
+  background: linear-gradient(90deg,#ff9a9e,#a6c1ee,#84fab0);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+
+.demand-list {
+  list-style: none;
+  max-width: 700px;
+  margin: auto;
+  text-align: left;
+  padding: 0;
+}
+
+.demand-list li {
+  margin: 15px 0;
+  padding: 15px 20px;
+  background: rgba(0,0,0,0.4);
+  border-radius: 12px;
+  color: #ddd;
+  font-size: 1rem;
+  line-height: 1.6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 0 15px rgba(255,255,255,0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.demand-list li:hover {
+  transform: translateX(6px);
+  box-shadow: 0 0 20px rgba(120,220,255,0.3);
+}
+
+/* Section spacing consistency */
+#expectations, #pricing {
+  padding: 60px 8%;   /* reduce top/bottom padding */
+  margin: 0;          /* remove extra margin */
+}
+
+#pricing {
+  padding-top: 5px;  /* smaller top padding to close the gap */
+}
+
+
+/* Contact styling */
+#contact {
+  padding: 80px 8%;
+  text-align: center;
+  background: rgba(255,255,255,0.03);
+  border-radius: 16px;
+  margin-top: 60px;
+  box-shadow: 0 0 25px rgba(255,255,255,0.05);
+}
+
+#contact h2 {
+  font-size: clamp(1.8rem, 5vw, 2.5rem);
+  margin-bottom: 25px;
+  background: linear-gradient(90deg,#ff9a9e,#a6c1ee,#84fab0);
+  -webkit-background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 15px rgba(255,255,255,0.2);
+}
+
+.contact-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 30px;
+}
+
+.contact-buttons a {
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(90deg,#6a11cb,#2575fc);
+  box-shadow: 0 0 20px rgba(100,150,255,0.3);
+  transition: all 0.3s ease;
+}
+
+.contact-buttons a:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 0 25px rgba(100,200,255,0.6);
+}
+
+    /* Footer */
+    footer {
+      text-align: center; padding: 40px 20px;
+      background: rgba(255,255,255,0.04);
+      border-top: 1px solid rgba(255,255,255,0.15);
+      font-size: 0.9rem; color: #aaa;
+    }
+
+    canvas#particles {
+      position: fixed; top:0; left:0; width:100%; height:100%;
+      z-index:-1; background: transparent;
+    }
+
+    /* Lightbox */
+    .lightbox {
+      position: fixed; top:0; left:0;
+      width:100%; height:100%;
+      background: rgba(0,0,0,0.92);
+      display: flex; justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 5000;
+    }
+    .lightbox.active {
+      opacity: 1; pointer-events: auto;
+    }
+    .lightbox img {
+      max-width: 92%; max-height: 92%;
+      border-radius: 10px;
+      transform: scale(0.7);
+      opacity: 0;
+      transition: transform 0.4s ease, opacity 0.4s ease;
+      box-shadow: 0 0 40px rgba(255,255,255,0.3);
+    }
+    .lightbox.active img {
+      transform: scale(1); opacity: 1;
+    }
+    .lightbox button {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.6);
+      border: none; color: #fff;
+      font-size: 2rem;
+      cursor: pointer;
+      padding: 10px 15px;
+      border-radius: 50%;
+      transition: background 0.3s;
+    }
+    .lightbox button:hover { background: rgba(255,255,255,0.2); }
+    #lbPrev { left: 20px; }
+    #lbNext { right: 20px; }
+    #lbClose { top: 20px; right: 20px; transform: none; }
+
+    
+  </style>
+</head>
+<body>
+  <canvas id="particles"></canvas>
+  <div class="scroll-indicator" id="scrollBar"></div>
+
+  <header>
+    <h1>Joi</h1>
+    <div class="menu-toggle" id="menuToggle">☰</div>
+    <nav>
+      <ul id="navLinks">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#expectations">Expectations</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <section id="hero">
+    <div>
+<h2>Hello, I'm Joi</h2>
+<p class="description">
+  A Roblox builder with over a year of experience in creating 
+  <span class="font-semibold">high-quality terrain</span> and 
+  <span class="font-semibold">detailed builds</span>.  
+  I’ve worked across multiple genres and specialize in delivering maps that are 
+  optimized for gameplay and matching ur vision.  
+  My goal is simple: to bring your ideas to life, exactly how you imagine them.
+</p>
+    </div>
+  </section>
+
+  <section id="gallery">
+ <div class="gallery-item"><img  src="pic1.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic2.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic3.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic4.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic5.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic6.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic7.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="pic8.png" alt="Build" ></div>
+ <div class="gallery-item"><img  src="p9.png"   alt="Build" ></div>
+ <div class="gallery-item"><img  src="p10.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p11.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p12.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p13.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p14.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p15.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p16.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p17.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p18.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p19.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p20.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p21.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p22.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p23.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p24.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p25.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p26.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p27.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p28.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p29.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p30.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p31.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p32.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p33.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p34.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p35.png"  alt="Build" ></div>
+ <div class="gallery-item"><img  src="p36.png"  alt="Build" ></div>
+  </section>
+
+  <!-- Expectations Section -->
+<section id="expectations" class="bg-gray-900 text-gray-100 py-16 px-6 md:px-20">
+  <div class="max-w-4xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-6">🤝 Working With Me</h2>
+    <p class="text-lg text-gray-300 mb-12">
+      To make every project smooth and professional, here’s what I expect from clients:
+    </p>
+
+    <div class="text-left bg-gray-800 rounded-2xl shadow-lg p-8">
+      <ul class="space-y-4 text-gray-300">
+        <li>✔️ <span class="font-semibold"></span> 40–50% upfront so that there are no time wasters or scammers, rest on completion.</li>
+        <li>✔️ <span class="font-semibold"></span>Don't rush me</li>
+        <li>✔️ <span class="font-semibold">Revision clarity</span> (1–2 minor changes included, major changes extra).</li>
+      </ul>
+    </div>
+
+    <p class="text-gray-400 mt-8 italic">
+      💡 This ensures I can deliver the best quality work while keeping everything fair and professional.
+    </p>
+  </div>
+</section>
+
+
+<!-- Pricing Section -->
+<section id="pricing" class="bg-gray-900 text-gray-100 py-16 px-6 md:px-20">
+  <div class="max-w-6xl mx-auto text-center">
+    <h2 class="text-4xl font-bold mb-4">💰 Pricing</h2>
+    <p class="text-gray-400 italic mb-10">Prices can always be discussed — feel free to DM me!</p>
+    
+    <p class="text-lg text-gray-300 mb-14 leading-relaxed">
+      My rates are flexible and based on <span class="font-semibold">map size, detail level, and features</span>.  
+      Here’s a transparent breakdown so you know exactly what to expect:
+    </p>
+
+    <ul class="space-y-5 text-gray-300 text-left max-w-3xl mx-auto">
+      <li>• Simple terrain + few props → <span class="font-bold">$30 – $60</span></li>
+      <li>• Medium detail (stylized builds, some structures) → <span class="font-bold">$60 – $120</span></li>
+      <li>• High detail (dense builds, interiors, polished lighting) → <span class="font-bold">$150 – $300</span></li>
+    </ul>
+
+    <!-- Add-ons -->
+    <div class="mt-16 text-left max-w-3xl mx-auto">
+      <h3 class="text-2xl font-semibold mb-6">✨ Add-Ons & Extras</h3>
+      <ul class="space-y-4 text-gray-300">
+        <li>• Custom assets / props → <span class="font-medium">+$20 – $100</span></li>
+        <li>• Detailed interiors → <span class="font-medium">+$50 – $150</span></li>
+        <li>• Optimization & polished lighting → <span class="font-medium">+$50 – $200</span></li>
+        <li>• Scripting integration → <span class="font-medium">Custom pricing</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact">
+  <h2>📩 Contact Me</h2>
+  <p class="description">Let’s work together! You can reach me here:</p>
+
+  <div class="contact-buttons">
+    <a href="https://discord.com/users/joi11223344" target="_blank">💬 Discord</a>
+    <a href="https://www.roblox.com/users/112233444/profile" target="_blank">🎮 Roblox</a>
+  </div>
+</section>
+
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button id="lbPrev">◀</button>
+    <img src="" alt="Zoomed view" />
+    <button id="lbNext">▶</button>
+    <button id="lbClose">✕</button>
+  </div>
+
+  <script>
+    // Fade in
+    window.addEventListener('DOMContentLoaded', () => {
+      document.body.classList.add('fade-in');
+    });
+
+    // Mobile menu toggle
+    document.getElementById('menuToggle').addEventListener('click', ()=>{
+      document.getElementById('navLinks').classList.toggle('active');
+    });
+
+    // Scroll indicator
+    window.addEventListener('scroll', () => {
+      let scrollTop = window.scrollY;
+      let docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      let scrollPercent = (scrollTop / docHeight) * 100;
+      document.getElementById('scrollBar').style.width = scrollPercent + '%';
+    });
+
+    // Section reveal
+    const sections = document.querySelectorAll('section');
+    function revealSections(){
+      const triggerBottom = window.innerHeight * 0.85;
+      sections.forEach(sec=>{
+        if(sec.getBoundingClientRect().top < triggerBottom) sec.classList.add('active-section');
+      });
+    }
+    window.addEventListener('scroll', revealSections); revealSections();
+
+// Particle background
+const canvas = document.getElementById('particles'), ctx = canvas.getContext('2d');
+function resizeCanvas(){ canvas.width = innerWidth; canvas.height = innerHeight; }
+window.addEventListener('resize', resizeCanvas); resizeCanvas();
+
+const colors = ['#fbc2eb','#a6c1ee','#84fab0','#8fd3f4','#ff9a9e'];
+let particles = Array.from({length:100}, () => ({
+  x: Math.random() * canvas.width,
+  y: Math.random() * canvas.height,
+  r: Math.random() * 2 + 1,
+  dx: (Math.random() - 0.5) * 0.6,   // slower, smoother movement
+  dy: (Math.random() - 0.5) * 0.6,
+  color: colors[Math.floor(Math.random() * colors.length)] // assign once
+}));
+
+(function animate(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.fillStyle = p.color;  // keep same color
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fill();
+
+    p.x += p.dx;
+    p.y += p.dy;
+    if(p.x < 0 || p.x > canvas.width) p.dx *= -1;
+    if(p.y < 0 || p.y > canvas.height) p.dy *= -1;
+  });
+  requestAnimationFrame(animate);
+})();
+
+
+    // Lightbox
+    const galleryImgs=document.querySelectorAll('.gallery-item img');
+    const lightbox=document.getElementById('lightbox');
+    const lbImg=lightbox.querySelector('img');
+    let currentIndex=0;
+
+    galleryImgs.forEach((img,i)=>{
+      img.addEventListener('click', ()=>{
+        currentIndex=i;
+        showImg();
+        lightbox.classList.add('active');
+      });
+    });
+
+    function showImg(){
+      lbImg.src=galleryImgs[currentIndex].src;
+    }
+    document.getElementById('lbClose').onclick=()=>lightbox.classList.remove('active');
+    document.getElementById('lbNext').onclick=()=>{currentIndex=(currentIndex+1)%galleryImgs.length;showImg();};
+    document.getElementById('lbPrev').onclick=()=>{currentIndex=(currentIndex-1+galleryImgs.length)%galleryImgs.length;showImg();};
+    window.addEventListener('keydown',(e)=>{
+      if(!lightbox.classList.contains('active')) return;
+      if(e.key==='Escape') lightbox.classList.remove('active');
+      if(e.key==='ArrowRight') document.getElementById('lbNext').click();
+      if(e.key==='ArrowLeft') document.getElementById('lbPrev').click();
+    });
+  </script>
+</body>
+</html>
